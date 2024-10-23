@@ -32,8 +32,6 @@ def get_domain_tags_new(domain):
     headers = {
     'Content-Type': 'application/json'
     }
-    
-    #response = requests.request('GET', os.getenv('ES_URL') + '/domain_crawler/_search', headers=headers, data=payload)
     response = requests.request('GET', ES_URL + '/domain_crawler/_search', headers=headers, data=payload)
     json_data = json.loads(response.text)
     
