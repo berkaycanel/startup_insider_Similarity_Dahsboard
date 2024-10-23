@@ -130,7 +130,8 @@ def get_related_domains_new(tags, domain, funding_stage, employees, total_fundin
     headers = {
         'Content-Type': 'application/json'
     }
-    response = requests.request('GET', os.getenv('ES_URL') + '/domain_crawler/_search', headers=headers, data=payload)
+    response = requests.request('GET', ES_URL + '/domain_crawler/_search', headers=headers, data=payload)
+
     json_data = json.loads(response.text)
 
     print(json.dumps(json_data, indent=4))
