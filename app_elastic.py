@@ -22,7 +22,7 @@ with col2:
     st.image(logo_image, width=350)
 
 
-def format_tags(tags_list,as_dropdown=False):
+def format_tags(tags_list, as_dropdown=False):
     tags_html = ''
     for tag in tags_list:
         tags_html += f'<span class="tag">{tag}</span> '
@@ -93,7 +93,7 @@ def inject_custom_css():
     st.markdown(css, unsafe_allow_html=True)
 
 def clean_matched_values(values):
-    cleaned_values = [re.sub(r'<\/?em>', '', v) for v in values] 
+    cleaned_values = [re.sub(r'</?em>', '', v) for v in values] 
     return cleaned_values
 
 def display_domain_info(domain):
@@ -125,6 +125,12 @@ def display_domain_info(domain):
 
     st.subheader(f"Input Fields for Domain: {domain}")
     st.markdown(table_html, unsafe_allow_html=True)
+
+    # Extract input domain's tags as sets for efficient lookup
+    input_refined_gpt_tags = set(input_fields['Refined GPT Tags'])
+    input_cb_tags = set(input_fields['CB Tags'])
+    input_li_tags = set(input_fields['LI Tags'])
+    input_wp_tags = set(input_fields['WP Tags'])
 
     results = es.get_related_domains_new(
         input_fields['Refined GPT Tags'], 
@@ -161,13 +167,21 @@ def display_domain_info(domain):
                 cleaned_values = clean_matched_values(values)
 
                 if 'refined_gpt_tags.keyword' in field:
-                    refined_gpt_matches.extend(cleaned_values)
+                    # Filter matched values to only those present in input domain's Refined GPT Tags
+                    filtered_values = [val for val in cleaned_values if val in input_refined_gpt_tags]
+                    refined_gpt_matches.extend(filtered_values)
                 elif 'cb_tags.keyword' in field:
-                    cb_matches.extend(cleaned_values)
+                    # Filter matched values to only those present in input domain's CB Tags
+                    filtered_values = [val for val in cleaned_values if val in input_cb_tags]
+                    cb_matches.extend(filtered_values)
                 elif 'li_tags.keyword' in field:
-                    li_matches.extend(cleaned_values)
+                    # Filter matched values to only those present in input domain's LI Tags
+                    filtered_values = [val for val in cleaned_values if val in input_li_tags]
+                    li_matches.extend(filtered_values)
                 elif 'wp_tags.keyword' in field:
-                    wp_matches.extend(cleaned_values)
+                    # Filter matched values to only those present in input domain's WP Tags
+                    filtered_values = [val for val in cleaned_values if val in input_wp_tags]
+                    wp_matches.extend(filtered_values)
                 elif 'funding_stage' in field:
                     funding_stage_match.extend(cleaned_values)
                 elif 'employees' in field:
