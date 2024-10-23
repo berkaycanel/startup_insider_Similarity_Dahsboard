@@ -5,6 +5,31 @@ import os
 #load_dotenv()
 ES_URL = 'https://wordpress_staging:J4L3AAGz2NMT@83134a2d1d5e4b0db8824e0209a80600.eu-central-1.aws.cloud.es.io:9243'
 
+
+def get_all_domains():
+    payload = json.dumps({
+        "size": 34000,  # Adjust this number based on your dataset size
+        "_source": ["domain"],
+        "query": {
+            "match_all": {}
+        }
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.get(ES_URL + '/domain_crawler/_search', headers=headers, data=payload)
+        response.raise_for_status()
+        json_data = response.json()
+        domains = [hit['_source']['domain'] for hit in json_data['hits']['hits']]
+        return domains
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching domain list: {e}")
+        return []
+
+
+
 def get_domain_tags_new(domain):
     payload = json.dumps({
         'size': 1,
