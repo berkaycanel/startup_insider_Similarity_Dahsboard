@@ -11,8 +11,7 @@ def get_encoded_logo(logo_path):
         encoded_image = image_file.read()
     return encoded_image
 
-logo_image = get_encoded_logo("si_logo.png")  #
-
+logo_image = get_encoded_logo("si_logo.png")  
 col1, col2 = st.columns([8, 3])  
 
 with col1:
@@ -21,13 +20,12 @@ with col1:
 with col2:
     st.image(logo_image, width=350)
 
-
 def format_tags(tags_list, as_dropdown=False):
     tags_html = ''
     for tag in tags_list:
         tags_html += f'<span class="tag">{tag}</span> '
     tags_html = tags_html.strip()
-    if as_dropdown:
+    if as_dropdown and tags_html:
         tags_html = f'<details><summary>Show Tags</summary>{tags_html}</details>'
     return tags_html
 
@@ -99,6 +97,10 @@ def clean_matched_values(values):
 def display_domain_info(domain):
     input_data = es.get_domain_tags_new(domain)
     
+    if not input_data:
+        st.error(f"No data found for domain: {domain}")
+        return
+
     input_fields = {
         'Refined GPT Tags': input_data.get('refined_gpt_tags', []),
         'CB Tags': input_data.get('cb_tags', []),
@@ -126,7 +128,6 @@ def display_domain_info(domain):
     st.subheader(f"Input Fields for Domain: {domain}")
     st.markdown(table_html, unsafe_allow_html=True)
 
-    # Extract input domain's tags as sets for efficient lookup
     input_refined_gpt_tags = set(input_fields['Refined GPT Tags'])
     input_cb_tags = set(input_fields['CB Tags'])
     input_li_tags = set(input_fields['LI Tags'])
@@ -167,19 +168,15 @@ def display_domain_info(domain):
                 cleaned_values = clean_matched_values(values)
 
                 if 'refined_gpt_tags.keyword' in field:
-                    # Filter matched values to only those present in input domain's Refined GPT Tags
                     filtered_values = [val for val in cleaned_values if val in input_refined_gpt_tags]
                     refined_gpt_matches.extend(filtered_values)
                 elif 'cb_tags.keyword' in field:
-                    # Filter matched values to only those present in input domain's CB Tags
                     filtered_values = [val for val in cleaned_values if val in input_cb_tags]
                     cb_matches.extend(filtered_values)
                 elif 'li_tags.keyword' in field:
-                    # Filter matched values to only those present in input domain's LI Tags
                     filtered_values = [val for val in cleaned_values if val in input_li_tags]
                     li_matches.extend(filtered_values)
                 elif 'wp_tags.keyword' in field:
-                    # Filter matched values to only those present in input domain's WP Tags
                     filtered_values = [val for val in cleaned_values if val in input_wp_tags]
                     wp_matches.extend(filtered_values)
                 elif 'funding_stage' in field:
@@ -216,7 +213,19 @@ def display_domain_info(domain):
     st.subheader(f"Similarity Results for Domain: {domain}")
     st.write(styled_similarity_df, unsafe_allow_html=True)
 
-domain_input = st.text_input("Enter a domain to analyze", "")
+@st.cache_data
+def get_domain_list():
+    return es.get_all_domains()
 
-if domain_input:
-    display_domain_info(domain_input)
+domain_list = get_domain_list()
+
+if domain_list:
+    domain_list.sort()
+    domain_list.insert(0, 'Select a domain') 
+
+    domain_input = st.selectbox("Select a domain to analyze", domain_list)
+
+    if domain_input != 'Select a domain':
+        display_domain_info(domain_input)
+else:
+    st.error("Unable to retrieve domain list from the database.")
