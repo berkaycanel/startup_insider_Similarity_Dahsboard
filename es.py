@@ -1,9 +1,9 @@
 import requests
 import json
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 #load_dotenv()
-ES_URL = https://wordpress_staging:J4L3AAGz2NMT@83134a2d1d5e4b0db8824e0209a80600.eu-central-1.aws.cloud.es.io:9243
+ES_URL = 'https://wordpress_staging:J4L3AAGz2NMT@83134a2d1d5e4b0db8824e0209a80600.eu-central-1.aws.cloud.es.io:9243'
 
 def get_domain_tags_new(domain):
     payload = json.dumps({
@@ -34,7 +34,7 @@ def get_domain_tags_new(domain):
     }
     
     #response = requests.request('GET', os.getenv('ES_URL') + '/domain_crawler/_search', headers=headers, data=payload)
-    response = requests.request('GET', 'ES_URL' + '/domain_crawler/_search', headers=headers, data=payload)
+    response = requests.request('GET', ES_URL + '/domain_crawler/_search', headers=headers, data=payload)
     json_data = json.loads(response.text)
     
     if len(json_data['hits']['hits']) > 0:
