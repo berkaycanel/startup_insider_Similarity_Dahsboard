@@ -68,7 +68,7 @@ def get_related_domains_new(tags, domain, funding_stage, employees, total_fundin
             'funding_stage': 3.0,
             'employees': 2.0,
             'total_funding_amount': 3.0,
-            'wp_tags': 2.5
+            'wp_tags': 4.0
         }
 
     tags_obj = []
