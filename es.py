@@ -89,11 +89,11 @@ def get_related_domains_new(tags, domain, funding_stage, employees, total_fundin
             
             'refined_gpt_tags': 4.5,
             'cb_tags': 2.5,
-            'li_tags': 1.5,
-            'funding_stage': 1.0,
-            'employees': 1.0,
-            'total_funding_amount': 1.0,
-            'wp_tags': 3.0
+            'li_tags': 2.0,
+            'funding_stage': 3.0,
+            'employees': 2.0,
+            'total_funding_amount': 3.0,
+            'wp_tags': 3.5
         }
 
     tags_obj = []
