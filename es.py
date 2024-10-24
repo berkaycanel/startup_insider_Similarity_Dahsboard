@@ -87,13 +87,13 @@ def get_related_domains_new(tags, domain, funding_stage, employees, total_fundin
     if boosts is None:
         boosts = {
             
-            'refined_gpt_tags': 3.5,
+            'refined_gpt_tags': 4.5,
             'cb_tags': 2.5,
-            'li_tags': 3.0,
-            'funding_stage': 3.0,
+            'li_tags': 1.5,
+            'funding_stage': 2.0,
             'employees': 2.0,
-            'total_funding_amount': 3.0,
-            'wp_tags': 4.0
+            'total_funding_amount': 2.0,
+            'wp_tags': 3.0
         }
 
     tags_obj = []
